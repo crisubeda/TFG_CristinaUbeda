@@ -1,0 +1,12 @@
+#!/bin/bash
+
+hmm_dir="hmm6"
+scp_file="validation.scp"
+wdnet_file="wdnet1"
+dict_file="dict1.dict"
+classes_file="classes.list"
+
+for num_gmm in {1..40}; do
+    echo "Executing for hmm6_${num_gmm}GMM..."
+    HVite -H ${hmm_dir}_${num_gmm}GMM/macros -H ${hmm_dir}_${num_gmm}GMM/hmmdefs -S ${scp_file} -l '*' -i recout_${num_gmm}GMM.mlf -w ${wdnet_file} ${dict_file} ${classes_file}
+done

@@ -1,0 +1,41 @@
+#!/bin/bash
+
+ITERACIONES=40
+TRAINMLF=train.mlf
+TRAINSCP=train.scp
+CLASES=classes.list
+ADDGAUSSIANS=addgaussians.txt
+
+mkdir hmm0
+
+for i in $(seq 1 6)
+do
+  HERest -I $TRAINMLF -S $TRAINSCP -H hmm0/macros -H hmm0/hmmdefs -M hmm1 $CLASES
+done
+
+for j in $(seq 1 $ITERACIONES)
+do
+  
+  DIR_HMM_PREV="hmm$j"
+  DIR_HMM_ACTUAL="hmm$((j+1))"
+  DIR_HMM_GMM="${DIR_HMM_PREV}_2GMM"
+  DIR_HMM_GMM_PREV="$DIR_HMM_GMM"
+  DIR_HMM_GMM_ACTUAL="hmm$((j+1))_2GMM"
+
+  
+  mkdir $DIR_HMM_ACTUAL
+  mkdir $DIR_HMM_GMM_ACTUAL
+
+  
+  for i in $(seq 1 6)
+  do
+    HERest -I $TRAINMLF -S $TRAINSCP -H $DIR_HMM_PREV/macros -H $DIR_HMM_PREV/hmmdefs -M $DIR_HMM_ACTUAL $CLASES
+  done
+
+  HHEd -H $DIR_HMM_GMM_PREV/hmmdefs -H $DIR_HMM_GMM_PREV/macros -M $DIR_HMM_ACTUAL $ADDGAUSSIANS $CLASES
+
+  for i in $(seq 1 6)
+  do
+    HERest -I $TRAINMLF -S $TRAINSCP -H $DIR_HMM_GMM_PREV/macros -H $DIR_HMM_GMM_PREV/hmmdefs -M $DIR_HMM_GMM_ACTUAL $CLASES
+  done
+done

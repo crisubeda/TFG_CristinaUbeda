@@ -1,0 +1,10 @@
+#!/bin/bash
+
+mlf_file="validation.mlf"
+classes_file="classes.list"
+results_file="Results_validation_PRAAT.txt"
+
+for num_gmm in {1..40}; do
+    echo "Ejecutando para ${num_gmm}GMM..."
+    HResults -I ${mlf_file} ${classes_file} recout_${num_gmm}GMM.mlf >> ${results_file}
+Done
